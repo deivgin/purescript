@@ -12,7 +12,14 @@ to generate this file without the comments in this block.
 -}
 { name = "my-project"
 , dependencies =
-  [ "console", "effect", "httpurple", "prelude", "routing-duplex" ]
+  [
+  , "console"
+  , "effect"
+  , "httpurple"
+  , "prelude"
+  , "refs"
+  , "routing-duplex"
+  ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
