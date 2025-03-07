@@ -16,10 +16,11 @@ main = do
   serve { hostname: "localhost" , port: 8080, onStarted } { route, router: router stateRef }
   where
   onStarted = do
-    log " ┌────────────────────────────────────────────┐"
-    log " │ Server now up on port 8080                 │"
-    log " │                                            │"
-    log " │ To test, run:                              │"
-    log " │  > curl localhost:8080   # => hello world! │"
-    log " │  > curl localhost:8080/todos               │"
-    log " └────────────────────────────────────────────┘"
+    log " ┌─────────────────────────────────────────┐"
+    log " │                                         │"
+    log " │   Todo App Server                       │"
+    log " │   Running on port 8080                  │"
+    log " │                                         │"
+    log " │   Ready to manage your tasks!           │"
+    log " │                                         │"
+    log " └─────────────────────────────────────────┘"
