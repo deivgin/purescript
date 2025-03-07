@@ -21,5 +21,5 @@ main = do
     log " │                                            │"
     log " │ To test, run:                              │"
     log " │  > curl localhost:8080   # => hello world! │"
-    log " │  > curl localhost:8080/todos              │"
+    log " │  > curl localhost:8080/todos               │"
     log " └────────────────────────────────────────────┘"

@@ -12,11 +12,11 @@ to generate this file without the comments in this block.
 -}
 { name = "my-project"
 , dependencies =
-  [
-  , "argonaut-codecs"
+  [ "argonaut-codecs"
   , "argonaut-core"
   , "console"
   , "effect"
+  , "either"
   , "httpurple"
   , "ordered-collections"
   , "prelude"
