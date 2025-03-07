@@ -1,0 +1,20 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "scripts": {
+    "build": "spago build",
+    "bundle": "spago bundle-app --to output.js && esbuild output.js --bundle --outfile=static/index.js --platform=browser",
+    "start": "npm run bundle && npx http-server static"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
