@@ -1,21 +1,24 @@
 module Route where
 
-import Prelude (($))
+import AppState (AppState)
 import Data.Generic.Rep (class Generic)
-import HTTPurple (Request, ResponseM, ok)
+import Effect.Ref (Ref)
+import HTTPurple (Request, ResponseM)
+import Prelude (($))
+import Route.GetTodos as GetTodosRoute
 import Routing.Duplex as RD
 import Routing.Duplex.Generic as RG
 import Routing.Duplex.Generic.Syntax ((/))
 
-data Route = Hello | GoodBye
+
+data Route =  GetTodos
 derive instance Generic Route _
 
 route :: RD.RouteDuplex' Route
 route = RD.root $ RG.sum
-  { "Hello": "hello" / RG.noArgs
-  , "GoodBye": "goodbye" / RG.noArgs
+  { "Home": "home" / RG.noArgs
+  , "GetTodos": "todos" / RG.noArgs
   }
 
-router :: Request Route -> ResponseM
-router { route: Hello } = ok "hello"
-router { route: GoodBye } = ok "goodbye"
+router :: Ref AppState -> Request Route -> ResponseM
+router state { route: GetTodos } = GetTodosRoute.handler state

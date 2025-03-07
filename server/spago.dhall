@@ -13,12 +13,16 @@ to generate this file without the comments in this block.
 { name = "my-project"
 , dependencies =
   [
+  , "argonaut-codecs"
+  , "argonaut-core"
   , "console"
   , "effect"
   , "httpurple"
+  , "ordered-collections"
   , "prelude"
   , "refs"
   , "routing-duplex"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
