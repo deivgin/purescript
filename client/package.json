@@ -11,7 +11,7 @@
   "scripts": {
     "build": "spago build",
     "bundle": "spago bundle-app --to output.js && esbuild output.js --bundle --outfile=static/index.js --platform=browser",
-    "start": "npm run bundle && npx http-server static"
+    "start": "npm run bundle && npx http-server static --cors"
   },
   "keywords": [],
   "author": "",

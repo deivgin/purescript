@@ -13,13 +13,13 @@ main :: ServerM
 main = do
   stateRef <- liftEffect $ Ref.new initialState
 
-  serve { hostname: "localhost" , port: 8080, onStarted } { route, router: router stateRef }
+  serve { hostname: "localhost" , port: 8081, onStarted } { route, router: router stateRef }
   where
   onStarted = do
     log " ┌─────────────────────────────────────────┐"
     log " │                                         │"
     log " │   Todo App Server                       │"
-    log " │   Running on port 8080                  │"
+    log " │   Running on port 8081                  │"
     log " │                                         │"
     log " │   Ready to manage your tasks!           │"
     log " │                                         │"
