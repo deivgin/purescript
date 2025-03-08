@@ -5,7 +5,7 @@ import Prelude
 import Data.Maybe (Maybe)
 
 type Todo =
-  { id :: Int
+  { id :: String
   , text :: String
   , completed :: Boolean
   }

@@ -23,7 +23,7 @@ getTodos =
 
 createTodo :: String -> Aff (Either String Todo)
 createTodo text =
-  request POST "/todos" (Just $ encodeJson { text, completed: false }) decodeTodo
+  request POST "/todos/add" (Just $ encodeJson { text, completed: false }) decodeTodo
   where
     decodeTodo :: Json -> Either String Todo
     decodeTodo json = case decodeJson json of
@@ -32,13 +32,16 @@ createTodo text =
 
 updateTodo :: Todo -> Aff (Either String Todo)
 updateTodo todo =
-  request GET ("/todos/" <> show todo.id) (Just $ encodeJson todo) decodeTodo
+  request POST ("/todos/update" <> todo.id) (Just $ encodeJson todo) decodeTodo
   where
     decodeTodo :: Json -> Either String Todo
     decodeTodo json = case decodeJson json of
       Left err -> Left (printJsonDecodeError err)
       Right result -> Right result
 
-deleteTodo :: Int -> Aff (Either String Unit)
-deleteTodo id =
-  request GET ("/todos/" <> show id) Nothing (\_ -> Right unit)
+deleteTodo :: String -> Aff (Either String Unit)
+deleteTodo todoId =
+  request DELETE ("/todos/remove/" <> todoId) Nothing decodeResponse
+  where
+    decodeResponse :: Json -> Either String Unit
+    decodeResponse _ = Right unit

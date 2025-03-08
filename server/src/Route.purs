@@ -7,15 +7,14 @@ import Data.Generic.Rep (class Generic)
 import Effect.Ref (Ref)
 import HTTPurple (Request, ResponseM)
 import HTTPurple.Body (toString)
-import Routing.Duplex as RD
-import Routing.Duplex.Generic as RG
-import Routing.Duplex.Generic.Syntax ((/))
 import Middleware.Cors (addCorsHeaders)
-
 import Route.AddTodo as AddTodoRoute
 import Route.GetTodos as GetTodosRoute
 import Route.RemoveTodo as RemoveTodoRoute
 import Route.UpdateTodo as UpdateTodoRoute
+import Routing.Duplex as RD
+import Routing.Duplex.Generic as RG
+import Routing.Duplex.Generic.Syntax ((/))
 
 data Route =  GetTodos | AddTodo | RemoveTodo String | UpdateTodo String
 derive instance Generic Route _

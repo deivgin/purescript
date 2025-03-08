@@ -20,8 +20,8 @@ data Action
   | LoadTodos
   | UpdateNewTodoText String
   | AddTodo Event
-  | ToggleTodo Int
-  | DeleteTodo Int
+  | ToggleTodo String
+  | DeleteTodo String
 
 initialState :: State
 initialState =
@@ -151,4 +151,11 @@ handleAction = case _ of
             }
 
   DeleteTodo id -> do
-    H.modify_ \state -> state { todos = filter (\todo -> todo.id /= id) state.todos }
+    response <- H.liftAff $ Api.deleteTodo id
+    case response of
+      Right _ -> do
+        -- Delete was successful, update local state
+        H.modify_ \state -> state { todos = filter (\todo -> todo.id /= id) state.todos }
+      Left error -> do
+        -- Handle error case
+        H.modify_ \state -> state { errorMessage = Just error }

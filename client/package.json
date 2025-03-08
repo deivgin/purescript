@@ -9,9 +9,10 @@
     "esbuild": "^0.25.0"
   },
   "scripts": {
-    "build": "spago build",
+    "clean": "rm -rf output .spago output.js static/index.js",
+    "build": "npm run clean && spago build",
     "bundle": "spago bundle-app --to output.js && esbuild output.js --bundle --outfile=static/index.js --platform=browser",
-    "start": "npm run bundle && npx http-server static"
+    "start": "npm run build && npm run bundle && npx http-server static"
   },
   "keywords": [],
   "author": "",
