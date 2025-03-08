@@ -14,6 +14,7 @@ to generate this file without the comments in this block.
 , dependencies =
   [ "argonaut-codecs"
   , "argonaut-core"
+  , "arrays"
   , "console"
   , "effect"
   , "either"
@@ -23,6 +24,7 @@ to generate this file without the comments in this block.
   , "prelude"
   , "refs"
   , "routing-duplex"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

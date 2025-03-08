@@ -8,8 +8,8 @@ import Data.Argonaut.Decode ((.:), decodeJson)
 import Data.Argonaut.Decode.Class (class DecodeJson)
 import Data.Argonaut.Encode (encodeJson)
 import Data.Argonaut.Parser (jsonParser)
+import Data.Array (snoc)
 import Data.Either (Either(..))
-import Data.Map (insert)
 import Effect.Class (liftEffect)
 import Effect.Ref (Ref, modify)
 import HTTPurple (ResponseM, ok, badRequest)
@@ -35,7 +35,7 @@ handler stateRef body = do
           let newTodo = { id: todoId, text: request.text, completed: false }
 
           _ <- liftEffect $ modify (\state ->
-            { todos: insert todoId newTodo state.todos }
+            state { todos = snoc state.todos newTodo }
           ) stateRef
 
           ok $ stringify $ encodeJson newTodo

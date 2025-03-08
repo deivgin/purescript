@@ -10,6 +10,7 @@ import HTTPurple.Body (toString)
 import Routing.Duplex as RD
 import Routing.Duplex.Generic as RG
 import Routing.Duplex.Generic.Syntax ((/))
+import Middleware.Cors (addCorsHeaders)
 
 import Route.AddTodo as AddTodoRoute
 import Route.GetTodos as GetTodosRoute
@@ -28,11 +29,11 @@ route = RD.root $ RG.sum
   }
 
 router :: Ref AppState -> Request Route -> ResponseM
-router state { route: GetTodos } = GetTodosRoute.handler state
+router state { route: GetTodos } = addCorsHeaders $ GetTodosRoute.handler state
 router state { route: AddTodo, body } = do
   bodyString <- toString body
-  AddTodoRoute.handler state bodyString
-router state { route: RemoveTodo todoId } = RemoveTodoRoute.handler state todoId
+  addCorsHeaders $ AddTodoRoute.handler state bodyString
+router state { route: RemoveTodo todoId } = addCorsHeaders $ RemoveTodoRoute.handler state todoId
 router state { route: UpdateTodo todoId, body } = do
   bodyString <- toString body
-  UpdateTodoRoute.handler state todoId bodyString
+  addCorsHeaders $ UpdateTodoRoute.handler state todoId bodyString

@@ -8,9 +8,10 @@ import Data.Argonaut.Decode (decodeJson, (.:))
 import Data.Argonaut.Decode.Class (class DecodeJson)
 import Data.Argonaut.Encode (encodeJson)
 import Data.Argonaut.Parser (jsonParser)
+import Data.Array (findIndex, updateAt, (!!))
 import Data.Either (Either(..))
 import Data.Map (insert, lookup)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Effect.Class (liftEffect)
 import Effect.Ref (Ref, modify, read)
 import HTTPurple (ResponseM, ok, badRequest)
@@ -36,12 +37,22 @@ handler stateRef todoId body = do
         Right (UpdateTodoRequest request) -> do
           state <- liftEffect $ read stateRef
 
-          case lookup todoId state.todos of
+          let todoIndex = findIndex (\todo -> todo.id == todoId) state.todos
+
+          case todoIndex of
             Nothing -> do
               let errorMsg = stringify $ encodeJson { error: "Todo not found", id: todoId }
               response notFound errorMsg
 
-            Just todo -> do
-              let updatedTodo = todo { completed = request.completed }
-              _ <- liftEffect $ modify (\s -> { todos: insert todoId updatedTodo s.todos }) stateRef
-              ok $ stringify $ encodeJson updatedTodo
+            Just index ->
+              case state.todos !! index of
+                Nothing -> do
+                  let errorMsg = stringify $ encodeJson { error: "Todo not found at computed index", id: todoId }
+                  response notFound errorMsg
+
+                Just todo -> do
+                  let updatedTodo = todo { completed = request.completed }
+                      updatedTodos = fromMaybe state.todos (updateAt index updatedTodo state.todos)
+
+                  _ <- liftEffect $ modify (\s -> s { todos = updatedTodos }) stateRef
+                  ok $ stringify $ encodeJson updatedTodo
