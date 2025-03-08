@@ -1,4 +1,4 @@
-module Middleware.Cors where
+module Cors where
 
 import Prelude
 

@@ -7,7 +7,7 @@ import Data.Generic.Rep (class Generic)
 import Effect.Ref (Ref)
 import HTTPurple (Request, ResponseM)
 import HTTPurple.Body (toString)
-import Middleware.Cors (addCorsHeaders)
+import Cors (addCorsHeaders)
 import Route.AddTodo as AddTodoRoute
 import Route.GetTodos as GetTodosRoute
 import Route.RemoveTodo as RemoveTodoRoute

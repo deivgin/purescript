@@ -3,14 +3,13 @@ module Main where
 import Prelude
 
 import AppState (initialState)
-import Data.Tuple (Tuple(..))
+import Cors (addCorsHeaders)
 import Effect.Class (liftEffect)
 import Effect.Console (log)
 import Effect.Ref as Ref
 import HTTPurple (ServerM, serve, ok)
-import HTTPurple.Headers (mkRequestHeaders, toResponseHeaders)
+import HTTPurple.Method (Method(..))
 import Route (route, router)
-import HTTPurple.Method (read, Method(..))
 
 
 main :: ServerM
@@ -21,25 +20,12 @@ main = do
     { hostname: "localhost" , port: 8081, onStarted }
     { route
     , router: \req -> do
-        -- Add CORS headers to all responses
-        let withCorsHeaders response = do
-              let corsHeaders = mkRequestHeaders
-                    [ Tuple "Access-Control-Allow-Origin" "*"
-                    , Tuple "Access-Control-Allow-Methods" "GET, POST, PUT, DELETE, OPTIONS"
-                    , Tuple "Access-Control-Allow-Headers" "Content-Type, Authorization"
-                    , Tuple "Access-Control-Max-Age" "86400"
-                    ]
-              pure $ response { headers = toResponseHeaders corsHeaders }
-
         if req.method == Options
           then do
-            liftEffect $ log $ "OPTION"
-            ok "" >>= withCorsHeaders
+            addCorsHeaders (ok "")
           else do
-            liftEffect $ log $ "Request received: " <> show req.method
-            -- For regular requests, use the router and then add CORS headers
             response <- router stateRef req
-            withCorsHeaders response
+            addCorsHeaders (pure response)
     }
   where
   onStarted = do

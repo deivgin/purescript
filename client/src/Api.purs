@@ -32,7 +32,7 @@ createTodo text =
 
 updateTodo :: Todo -> Aff (Either String Todo)
 updateTodo todo =
-  request POST ("/todos/update" <> todo.id) (Just $ encodeJson todo) decodeTodo
+  request POST ("/todos/update/" <> todo.id) (Just $ encodeJson todo) decodeTodo
   where
     decodeTodo :: Json -> Either String Todo
     decodeTodo json = case decodeJson json of
