@@ -1,11 +1,8 @@
-module Route.RemoveTodo
-  ( handler
-  )
-  where
+module Route.RemoveTodo where
 
 import Prelude
 
-import AppState (AppState)
+import AppState (AppState, isTodoWithId)
 import Data.Argonaut.Core (stringify)
 import Data.Argonaut.Encode (encodeJson)
 import Data.Array (filter, find)
@@ -20,14 +17,13 @@ handler :: Ref AppState -> String -> ResponseM
 handler stateRef todoId = do
   state <- liftEffect $ read stateRef
 
-  case find (\todo -> todo.id == todoId) state.todos of
+  case find (isTodoWithId todoId) state.todos of
     Nothing -> do
       let errorMsg = stringify $ encodeJson { error: "Todo not found", id: todoId }
       response notFound errorMsg
 
     Just todo -> do
-      _ <- liftEffect $ modify (\s ->
-        s { todos = filter (\t -> t.id /= todoId) s.todos }
-      ) stateRef
-
+      _ <- liftEffect $ modify removeTodo stateRef
       ok $ stringify $ encodeJson { success: true, id: todoId, todo }
+      where
+      removeTodo s = s { todos = filter (not isTodoWithId todoId) s.todos }

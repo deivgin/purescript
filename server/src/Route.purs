@@ -7,7 +7,6 @@ import Data.Generic.Rep (class Generic)
 import Effect.Ref (Ref)
 import HTTPurple (Request, ResponseM)
 import HTTPurple.Body (toString)
-import Cors (addCorsHeaders)
 import Route.AddTodo as AddTodoRoute
 import Route.GetTodos as GetTodosRoute
 import Route.RemoveTodo as RemoveTodoRoute
@@ -28,11 +27,7 @@ route = RD.root $ RG.sum
   }
 
 router :: Ref AppState -> Request Route -> ResponseM
-router state { route: GetTodos } = addCorsHeaders $ GetTodosRoute.handler state
-router state { route: AddTodo, body } = do
-  bodyString <- toString body
-  addCorsHeaders $ AddTodoRoute.handler state bodyString
-router state { route: RemoveTodo todoId } = addCorsHeaders $ RemoveTodoRoute.handler state todoId
-router state { route: UpdateTodo todoId, body } = do
-  bodyString <- toString body
-  addCorsHeaders $ UpdateTodoRoute.handler state todoId bodyString
+router state { route: GetTodos } = GetTodosRoute.handler state
+router state { route: RemoveTodo todoId } = RemoveTodoRoute.handler state todoId
+router state { route: AddTodo, body } = toString body >>= AddTodoRoute.handler state
+router state { route: UpdateTodo todoId, body } = toString body >>= UpdateTodoRoute.handler state todoId

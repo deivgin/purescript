@@ -11,7 +11,6 @@ import HTTPurple (ServerM, serve, ok)
 import HTTPurple.Method (Method(..))
 import Route (route, router)
 
-
 main :: ServerM
 main = do
   stateRef <- liftEffect $ Ref.new initialState

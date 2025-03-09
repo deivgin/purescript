@@ -1,0 +1,23 @@
+{
+  "name": "purescript",
+  "version": "1.0.0",
+  "description": "This repository was created as part of my Software Methods and Models course in VU Software Engineering masters studies.",
+  "main": "index.js",
+  "scripts": {
+    "start:server": "cd server && npm start",
+    "start:client": "cd client && npm start",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deivgin/purescript.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deivgin/purescript/issues"
+  },
+  "homepage": "https://github.com/deivgin/purescript#readme"
+}
