@@ -2,7 +2,7 @@ module Route.UpdateTodo where
 
 import Prelude
 
-import AppState (AppState)
+import AppState (AppState, isTodoWithId)
 import Data.Argonaut.Core (stringify)
 import Data.Argonaut.Decode (decodeJson, (.:))
 import Data.Argonaut.Decode.Class (class DecodeJson)
@@ -10,7 +10,6 @@ import Data.Argonaut.Encode (encodeJson)
 import Data.Argonaut.Parser (jsonParser)
 import Data.Array (findIndex, updateAt, (!!))
 import Data.Either (Either(..))
-import Data.Map (insert, lookup)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Effect.Class (liftEffect)
 import Effect.Ref (Ref, modify, read)
@@ -31,13 +30,15 @@ handler :: Ref AppState -> String -> String -> ResponseM
 handler stateRef todoId body = do
   case jsonParser body of
     Left err -> badRequest $ "Invalid JSON: " <> show err
+
     Right json ->
       case decodeJson json of
         Left err -> badRequest $ "Invalid request format: " <> show err
+
         Right (UpdateTodoRequest request) -> do
           state <- liftEffect $ read stateRef
 
-          let todoIndex = findIndex (\todo -> todo.id == todoId) state.todos
+          let todoIndex = findIndex (isTodoWithId todoId) state.todos
 
           case todoIndex of
             Nothing -> do
