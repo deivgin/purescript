@@ -4,7 +4,6 @@ import Prelude
 
 import AppState (initialState)
 import Cors (addCorsHeaders)
-import Effect.Class (liftEffect)
 import Effect.Console (log)
 import Effect.Ref as Ref
 import HTTPurple (ServerM, serve, ok)
@@ -13,7 +12,7 @@ import Route (route, router)
 
 main :: ServerM
 main = do
-  stateRef <- liftEffect $ Ref.new initialState
+  stateRef <- Ref.new initialState
 
   serve
     { hostname: "localhost" , port: 8081, onStarted }
@@ -21,10 +20,10 @@ main = do
     , router: \req -> do
         if req.method == Options
           then do
-            addCorsHeaders (ok "")
+            addCorsHeaders $ ok ""
           else do
             response <- router stateRef req
-            addCorsHeaders (pure response)
+            addCorsHeaders $  pure response
     }
   where
   onStarted = do

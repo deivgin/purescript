@@ -12,7 +12,7 @@
     "clean": "rm -rf output .spago output.js static/index.js",
     "build": "npm run clean && spago build",
     "bundle": "spago bundle-app --to output.js && esbuild output.js --bundle --outfile=static/index.js --platform=browser",
-    "start": "npm run build && npm run bundle && npx http-server static"
+    "start": "npx http-server static"
   },
   "keywords": [],
   "author": "",

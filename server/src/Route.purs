@@ -29,5 +29,9 @@ route = RD.root $ RG.sum
 router :: Ref AppState -> Request Route -> ResponseM
 router state { route: GetTodos } = GetTodosRoute.handler state
 router state { route: RemoveTodo todoId } = RemoveTodoRoute.handler state todoId
-router state { route: AddTodo, body } = toString body >>= AddTodoRoute.handler state
-router state { route: UpdateTodo todoId, body } = toString body >>= UpdateTodoRoute.handler state todoId
+router state { route: AddTodo, body } = do
+  bodyString <- toString body
+  AddTodoRoute.handler state bodyString
+router state { route: UpdateTodo todoId, body } = do
+   bodyString <- toString body
+   UpdateTodoRoute.handler state todoId bodyString

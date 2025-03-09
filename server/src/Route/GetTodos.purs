@@ -12,4 +12,4 @@ import HTTPurple (ResponseM, ok)
 handler :: Ref AppState -> ResponseM
 handler stateRef = do
   state <- liftEffect $ read stateRef
-  ok (stringify $ encodeJson state.todos)
+  ok $ stringify $ encodeJson state.todos
