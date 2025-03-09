@@ -12,18 +12,27 @@ by Deividas Gineitis
 ## Table of contents
 
 1. Introductions
+2. Project overview
+3. Server
+4. Client
+5. Conclusions
+6. Q&A
 
 ---
 
 ## Structure of the presentation
 
-- This presentation will try to provide a quick overview of utilizing PureScript as a functional programming language for creating Web applications.
+- This presentation will try to provide a quick overview of we can utilizing PureScript as a functional programming language for creating Web applications.
 - The presentation will go through the project solutions and along the way try to explain interesting concepts and ways that PureScript can be used for web development.
-- Disclaimer: This code is by far not the best or the only way to use this technology, but we can learn some interesting things from it. Also this is a high level overview, just skimming the surface of PureScript and functional programming.
+- Disclaimer: This code is by far not the best or the only way to use this technology, but we can learn some interesting things from it.xw
 
 ---
 
 ## Introduction
+
+- PureScript is a strong-typed functional programming language that compiles to JavaScript.
+- Created in 2013 it brings the power of functional programming to the web.
+- PureScript can be slowly integrated to any JavaScript based codebase, at it is able to use all JavaScript code.
 
 ---
 
@@ -46,10 +55,17 @@ by Deividas Gineitis
 
 ---
 
-### AppState.purs and PureScript typing system
+## AppState.purs
 
-- PureScript is a typed language, thus it allows us to type our code. By default we have access to three core JavaScript types: `String`, `Number`, `Boolean`, but we also have access to other common types, such as `Int`, `Char`, `Record`, `Array` and others.
-- We can also define our own custom types with the help of _synonym_, such as `Todo`.
+- Our first file defines how our main entities and state will look like.
+- It is a great starting point as it shows us the basic syntax and how the typing system works in PureScript.
+
+---
+
+### Typing system
+
+- By default we have access to three core JavaScript types: `String`, `Number`, `Boolean`, but we also have access to other common types, such as `Int`, `Char`, `Record`, `Array` and others.
+- We can also define our own custom types.
 - We can also define and use _type constructors_, such as `Array`. These constructors require another type, as an `Array` is not just an array, it is an _Array of something_. In our case `Array Todo` - array of todo items.
 
 ```purescript
@@ -60,7 +76,7 @@ type AppState = { todos :: Array Todo }
 
 ---
 
-- We can also define variables and functions ny providing a type declaration.
+- We can also define variables and functions by providing a type declaration.
 - PureScript is indentation-sensitive
 - All functions in PureScript are _curried_
 
@@ -78,7 +94,7 @@ isTodoWithId todoId todo = todo.id == todoId
 
 ---
 
-## Main.purs and the Effect monad
+## Main.purs
 
 - PureScript projects start from the Main.purs file, in our server it is where we define and run our http server with the help of the `httpurple` library.
 - In this file there are a few interesting concepts:
@@ -114,6 +130,8 @@ main = do
 - We can also give an alias to our infix functions and define new operators, such as instead of calling `add` we can define it as `+`. (This is _similar_ to how the + operator is defined in PureScript itself)
 - In our `Main.purs` file we see the `$` operator, which is an infix operator for `apply`, a function that helps us better structure our function execution.
 
+---
+
 ```purescript
 add :: Int -> Int -> Int
 add a b = a + b
@@ -143,15 +161,27 @@ infix 4 add as +
 - In PureScript a very important monad is the `Effect` monad, which allows us to work native effects, such as console, random number generation, exceptions and reading/writing mutable state.
 - The `Effect` provides us a mutable reference `Ref` that allows us to create, read and modify our application state.
 
+```purescript
+stateRef <- Ref.new initialState
+```
+
+---
+
+### The Do notation
+
+- in PureScript the Do notation defines a block of code in which we are able to work with Monadic expressions way easier.
+- It is a syntactical sugar for the bind function.
+- With the `<-` symbol we are able to extract values from Monads, with the code automatically failing if we are unable to do so.
+
 ---
 
 ## Route.purs
 
 - The file `Route.purs` defines our application api endpoints. We use a routing library to make our route definitions simpler.
 - Here we can see a new concepts:
-  1. Pattern matching
-  2. Algebraic types
-  3. Type classes
+  - Pattern matching
+  - Algebraic types
+  - Type classes
 
 ---
 
@@ -161,6 +191,8 @@ infix 4 add as +
 - In our routing implementation, we define a router function that has a case for each of our routes.
 - PureScript is able to identify what router function case to run based on what instance of route is being used.
 - This allows us to handle each route and call its corresponding handler.
+
+---
 
 ```purescript
 router :: Ref AppState -> Request Route -> ResponseM
@@ -221,6 +253,20 @@ handler stateRef = do
 - This route is responsible for removing a todo item from our state.
 - Here we see a new `case` expression and usage of the `Maybe` monad
 
+```purescript
+handler :: Ref AppState -> String -> ResponseM
+handler stateRef todoId = do
+  state <- liftEffect $ read stateRef
+
+  case find (isTodoWithId todoId) state.todos of
+    Nothing -> notFound
+    Just todo -> do
+      _ <- liftEffect $ modify removeTodo stateRef
+      ok $ stringify $ encodeJson { success: true, id: todoId, todo }
+      where
+      removeTodo s = s { todos = filter (not isTodoWithId todoId) s.todos }
+```
+
 ---
 
 ### Maybe monad
@@ -279,9 +325,46 @@ case decodeJson json of
 
 ---
 
+## Client
+
+- The client is a web interface implementation with PureScript, showing the basic capabilities of creating UIs and components.
+- By leveraging `halogen`, a library for working with UIs, we can crate modern web apps.
+
+---
+
+## Client structure
+
+- `Main.purs` is the entry point and specifies how we can inject our custom UI elements into the DOM.
+- `Store.purs` uses techniques seen in our server implementation to create action handlers and state modification.
+- `Request.purs` implements a reusable request function that works with the `Aff` monad.
+- `Api.purs` implements our api fetch functions.
+- `Todo.purs` defines our app UI and its state.
+
+---
+
+### Aff monad
+
+- `Aff` monad in PureScript is similar to the `Effect` monad, but it represents asynchronous side effects.
+- We can also use the do notation to work with these monads.
+
+---
+
+## Conclusions
+
+- With this project we have shown that we can use functional programming languages to create modern web apps.
+- We were able to see how PureScript implements some of core functional programming principles.
+- PureScript is a great way to slowly migrate your JavaScript codebase and to use strict typed functional programming to create robust web applications.
+
+---
+
+## Q&A
+
+---
+
 ## Resources
 
 1. https://book.purescript.org/index.html
 2. https://en.wikipedia.org/wiki/Currying
-3. https://www.youtube.com/watch?v=HIBTu-y-Jwk
-4. https://www.youtube.com/watch?v=VgA4wCaxp-Q
+3. https://en.wikipedia.org/wiki/Monad_(functional_programming)
+4. https://www.youtube.com/watch?v=HIBTu-y-Jwk
+5. https://www.youtube.com/watch?v=VgA4wCaxp-Q
