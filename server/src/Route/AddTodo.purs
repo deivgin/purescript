@@ -2,7 +2,7 @@ module Route.AddTodo where
 
 import Prelude
 
-import AppState (AppState)
+import AppState (AppState, generateUniqueId)
 import Data.Argonaut.Core (stringify)
 import Data.Argonaut.Decode ((.:), decodeJson)
 import Data.Argonaut.Decode.Class (class DecodeJson)
@@ -26,16 +26,13 @@ handler :: Ref AppState -> String -> ResponseM
 handler stateRef body = do
   case jsonParser body of
     Left err -> badRequest $ "Invalid JSON: " <> show err
+
     Right json ->
       case decodeJson json of
         Left err -> badRequest $ "Invalid request format: " <> show err
+
         Right (AddTodoRequest request) -> do
-          let todoId = "todo-" <> request.text
-
+          todoId <- liftEffect generateUniqueId
           let newTodo = { id: todoId, text: request.text, completed: false }
-
-          _ <- liftEffect $ modify (\state ->
-            state { todos = snoc state.todos newTodo }
-          ) stateRef
-
+          _ <- liftEffect $ modify (\s -> s { todos = snoc s.todos newTodo }) stateRef
           ok $ stringify $ encodeJson newTodo
